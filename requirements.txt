@@ -6,6 +6,7 @@ django-celery==3.2.1
 django-mailing==0.1.3
 djangorestframework==3.7.1
 kombu==4.1.0
+psycopg2==2.7.3.2
 pytz==2017.3
 redis==2.10.6
 vine==1.1.4
