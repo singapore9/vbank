@@ -116,7 +116,7 @@ class ApplicationUser(AbstractBaseUser, PermissionsMixin, ResetPasswordMixin, Co
     middle_name = models.CharField(_('middle name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     email = models.EmailField(_('email address'), unique=True, blank=False, null=False)
-    birthday = models.DateField()
+    birthday = models.DateField(null=True)
     residence_address = models.CharField(_('residence address'), max_length=255, blank=True)
 
     is_staff = models.BooleanField(
