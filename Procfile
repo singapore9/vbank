@@ -1,0 +1,1 @@
+web: gunicorn vbank.wsgi --log-file -
