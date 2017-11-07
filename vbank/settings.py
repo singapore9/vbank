@@ -28,6 +28,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = ['*', ]
+BACKEND_URL = os.environ['BACKEND_URL']
 
 
 # Application definition
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'mailing',
     'rest_framework',
     'custom_auth',
     'members',
@@ -151,3 +154,12 @@ REST_FRAMEWORK = {
 }
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+if DEBUG:
+    DEFAULT_FROM_EMAIL = 'noreply@example.com'
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    DEFAULT_FROM_EMAIL = 'sharik.and@gmail.com'
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
