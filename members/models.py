@@ -28,7 +28,7 @@ class Member(ApplicationUser):
 
     positions = (
         (MANAGER, 'Manager'),
-        (CLIENT, 'Driver'),
+        (CLIENT, 'Client'),
         (NOT_DEFINED, 'OUT_OF_ROLE')
     )
 
