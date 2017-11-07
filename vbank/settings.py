@@ -159,11 +159,15 @@ REST_FRAMEWORK = {
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
 if DEBUG:
-    DEFAULT_FROM_EMAIL = 'noreply@example.com'
-    SERVER_EMAIL = DEFAULT_FROM_EMAIL
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    DEFAULT_FROM_EMAIL = 'sharik.and@gmail.com'
-    SERVER_EMAIL = DEFAULT_FROM_EMAIL
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+    EMAIL_PORT = 587
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
