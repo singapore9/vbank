@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+# Fix for mailing with Python3
+import builtins
+builtins.basestring = (str, bytes)
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import re
 
