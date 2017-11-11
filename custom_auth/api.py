@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
+import datetime
 from django.db.transaction import atomic
+from drf_secure_token.models import Token
 from rest_framework import decorators, mixins, permissions, status, viewsets
 from rest_framework.response import Response
 
@@ -23,7 +25,21 @@ class RetrieveSelfMixin(object):
         return super(RetrieveSelfMixin, self).get_object()
 
 
-class UserViewSet(RetrieveSelfMixin,
+class UpdateTokenMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        token_header = request.META.get('HTTP_AUTHORIZATION')
+        token = token_header.split()[-1] if token_header else None
+        if Token.objects.filter(key=token).exists():
+            token = Token.objects.filter(key=token).first()
+            if token.dead_in <= datetime.datetime.now:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                request.META.set('HTTP_AUTHORIZATION', Token.objects.create())
+        return super(self, UpdateTokenMixin).dispatch(request, *args, **kwargs)
+
+
+class UserViewSet(UpdateTokenMixin,
+                  RetrieveSelfMixin,
                   mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   mixins.CreateModelMixin,
@@ -43,10 +59,6 @@ class UserViewSet(RetrieveSelfMixin,
         response = super(UserViewSet, self).create(request, *args, **kwargs)
         response.data = None
         return response
-
-    def perform_create(self, serializer):
-        obj = serializer.save()
-        obj.set_merchant_position(self.merchant_position)
 
 
 class UserAuthViewSet(viewsets.ViewSet):
