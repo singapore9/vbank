@@ -64,7 +64,7 @@ class UserAuthViewSet(viewsets.ViewSet):
                         data=UserSerializer(instance=self.user).data)
 
     @decorators.list_route(methods=['post'], permission_classes=[permissions.AllowAny], url_path='login-client')
-    def login_driver(self, request, roles=['is_client']):
+    def login_client(self, request, roles=['is_client']):
         return self._basic_login(roles)
 
     def get_login_serializer(self, **kwargs):
