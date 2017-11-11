@@ -9,3 +9,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = '__all__'
+
+
+class MiniUserSerializer(UserSerializer):
+
+    class Meta(UserSerializer.Meta):
+        fields = ('first_name', 'middle_name', 'last_name', 'birthday', 'residence_address', 'email', 'username', )

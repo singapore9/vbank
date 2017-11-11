@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
 
-from members.serializers import UserSerializer
+from members.serializers import UserSerializer, MiniUserSerializer
 
 from .permissions import IsSelfOrReadOnly, POSTOnlyIfAnonymous
 from .serializers import UsernameLoginSerializer
@@ -61,7 +61,7 @@ class UserAuthViewSet(viewsets.ViewSet):
         self.user = serializer.authenticate(roles)
         return Response(status=status.HTTP_201_CREATED,
                         headers=self.get_success_headers(),
-                        data=UserSerializer(instance=self.user).data)
+                        data=MiniUserSerializer(instance=self.user).data)
 
     @decorators.list_route(methods=['post'], permission_classes=[permissions.AllowAny], url_path='login-client')
     def login_client(self, request, roles=['is_client']):
