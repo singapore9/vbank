@@ -59,9 +59,18 @@ class UserAuthViewSet(viewsets.ViewSet):
         serializer = self.get_login_serializer()
         serializer.is_valid(raise_exception=True)
         self.user = serializer.authenticate(roles)
+        self._remove_tokens(self.user)
         return Response(status=status.HTTP_201_CREATED,
                         headers=self.get_success_headers(),
                         data=MiniUserSerializer(instance=self.user).data)
+
+    @staticmethod
+    def _remove_tokens(user, token=None):
+        if user.is_client:
+            tokens_for_delete = user.user_auth_tokens.all()
+        else:
+            tokens_for_delete = user.user_auth_tokens.filter(key=token)
+        tokens_for_delete.delete()
 
     @decorators.list_route(methods=['post'], permission_classes=[permissions.AllowAny], url_path='login-client')
     def login_client(self, request, roles=['is_client']):
@@ -77,12 +86,6 @@ class UserAuthViewSet(viewsets.ViewSet):
     def logout(self, request):
         auth_token = request._request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
 
-        # TODO: Remove all tokens for drivers on logout. But we must also remove tokens for managers.
-        # This code must be changed after confirming this logic.
-        if request.user.is_client:
-            tokens_for_delete = request.user.user_auth_tokens.all()
-        else:
-            tokens_for_delete = request.user.user_auth_tokens.filter(key=auth_token)
-        tokens_for_delete.delete()
+        self._remove_tokens(request.user, auth_token)
 
         return Response(None, status=status.HTTP_204_NO_CONTENT)
