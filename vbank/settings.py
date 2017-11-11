@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'drf_secure_token.middleware.UpdateTokenMiddleware',
+    'custom_auth.middleware.UpdateTokenMiddleware',
 ]
 
 ROOT_URLCONF = 'vbank.urls'
