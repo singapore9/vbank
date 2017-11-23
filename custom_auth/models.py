@@ -67,19 +67,10 @@ class ConfirmAccountMixin(SendMessageMixin, models.Model):
     confirm_account_token_generator = default_token_generator
 
     is_confirmed = models.BooleanField(_('confirmed'), default=False,
-        help_text=_('Designates whether this user confirm his account.'))
+                                       help_text=_('Designates whether this user confirm his account.'))
 
     class Meta:
         abstract = True
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        is_new = not self.pk
-
-        super(ConfirmAccountMixin, self).save(force_insert, force_update, using, update_fields)
-
-        if is_new and not self.is_confirmed:
-            self.send_confirm_account_email()
 
     def get_confirm_account_url(self):
         uid = urlsafe_base64_encode(force_bytes(self.pk))
