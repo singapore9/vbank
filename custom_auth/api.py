@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
 
-from members.serializers import UserSerializer, MiniUserSerializer
+from members.serializers.members import UserSerializer, MiniUserSerializer
 
 from .permissions import IsSelfOrReadOnly, POSTOnlyIfAnonymous
 from .serializers import UsernameLoginSerializer
