@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
+from members.models.bank_accounts import BankAccount
+from members.models.bank_cards import BankCard
+from members.models.currencies import Currency
 from members.models.members import Member
 
 
@@ -25,3 +28,20 @@ class MemberAdmin(UserAdmin):
     search_fields = ('first_name', 'last_name', 'middle_name', 'email', )
     readonly_fields = ('last_login', 'date_joined')
     ordering = ('-id',)
+
+
+@admin.register(Currency)
+class CurrencyAdmin(admin.ModelAdmin):
+    list_display = ('code', 'country', 'exchange_rate')
+
+
+@admin.register(BankAccount)
+class BankAccountAdmin(admin.ModelAdmin):
+    list_display = ('id', 'holder', 'number', 'balance', 'currency')
+
+    list_filter = ('holder', 'currency')
+
+
+@admin.register(BankCard)
+class BankCardAdmin(admin.ModelAdmin):
+    list_display = ('id', 'holder', 'number')
