@@ -21,7 +21,6 @@ router = DefaultRouter()
 router.register(r'auth', UserAuthViewSet, 'auth')
 router.register(r'users', UserViewSet)
 
-api_patterns = \
-    [
-        url(r'', include(router.urls)),
-    ]
+api_patterns = [
+    url(r'', include(router.urls)),
+]

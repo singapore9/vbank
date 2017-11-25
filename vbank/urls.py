@@ -17,10 +17,12 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from custom_auth.urls import api_patterns as custom_auth_api
+from members.urls import api_patterns as bank_actions_api
 
 
 api_patterns = [] + \
-               custom_auth_api
+               custom_auth_api + \
+               bank_actions_api
 
 urlpatterns = [
     url(r'^api/', include(api_patterns)),
