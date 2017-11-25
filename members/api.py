@@ -9,7 +9,7 @@ from members.serializers.bank_cards import BankCardSerializer
 from members.serializers.currencies import CurrencySerializer
 
 
-class OwnerViewSet(mixins.RetrieveModelMixin,
+class OwnerViewSetMixin(mixins.RetrieveModelMixin,
                    mixins.ListModelMixin,
                    viewsets.GenericViewSet):
     permission_classes = [UserIsAuthenticated, ]
@@ -20,12 +20,12 @@ class OwnerViewSet(mixins.RetrieveModelMixin,
         return self._model.objects.filter(holder=client)
 
 
-class BankAccountViewSet(OwnerViewSet):
+class BankAccountViewSet(OwnerViewSetMixin):
     serializer_class = BankAccountSerializer
     _model = BankAccount
 
 
-class BankCardViewSet(OwnerViewSet):
+class BankCardViewSet(OwnerViewSetMixin):
     serializer_class = BankCardSerializer
     _model = BankCard
 

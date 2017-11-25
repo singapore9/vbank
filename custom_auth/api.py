@@ -2,14 +2,15 @@ from __future__ import absolute_import
 
 from django.db.transaction import atomic
 from rest_framework import decorators, mixins, permissions, status, viewsets
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
 
 from members.serializers.members import UserSerializer, MiniUserSerializer
 
-from .permissions import IsSelfOrReadOnly, POSTOnlyIfAnonymous
-from .serializers import UsernameLoginSerializer
+from .permissions import IsSelfOrReadOnly, POSTOnlyIfAnonymous, UserIsAuthenticated
+from .serializers import UsernameLoginSerializer, ChangePasswordSerializer
 
 
 class RetrieveSelfMixin(object):
@@ -43,6 +44,22 @@ class UserViewSet(RetrieveSelfMixin,
         response = super(UserViewSet, self).create(request, *args, **kwargs)
         response.data = None
         return response
+
+    @detail_route(methods=['put', 'patch'], permission_classes=[UserIsAuthenticated, ], url_path='change-password')
+    def change_password(self, request, *args, **kwargs):
+        object = self.get_object()
+        serializer = ChangePasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+            old_password = serializer.data.get("old_password")
+            if not object.check_password(old_password):
+                return Response({"old_password": ["Wrong old password."]},
+                                status=status.HTTP_400_BAD_REQUEST)
+            object.set_password(serializer.data.get("new_password"))
+            object.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserAuthViewSet(viewsets.ViewSet):
