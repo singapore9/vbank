@@ -25,6 +25,18 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
+    def update(self, instance, validated_data):
+        new_email = validated_data.get('email', None)
+        old_email = instance.email
+
+        updated = super(UserSerializer, self).update(instance, validated_data)
+        if new_email and new_email != old_email:
+            updated.is_confirmed = False
+            updated.send_confirm_account_email()
+            updated.save()
+
+        return updated
+
 
 class MiniUserSerializer(UserSerializer):
 
