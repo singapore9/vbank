@@ -13,3 +13,17 @@ class BankCard(models.Model):
 
     def __str__(self):
         return 'Card {number}'.format(number=self.number)
+
+    def favourite_external_transfers(self):
+        from transfers.models import ExternalTransfer
+
+        if not self.pk:
+            return ExternalTransfer.objects.none()
+        return ExternalTransfer.objects.filter(sender=self.pk).filter(is_favourite=True)
+
+    def favourite_internal_transfers(self):
+        from transfers.models import CardTransfer
+
+        if not self.pk:
+            return CardTransfer.objects.none()
+        return CardTransfer.objects.filter(sender=self.pk).filter(is_favourite=True)

@@ -21,4 +21,5 @@ class CardTransfer(TransferBase):
 
 class ExternalTransfer(TransferBase):
     sender = models.ForeignKey(BankCard, related_name='external_transfers')
+    is_favourite = models.BooleanField(default=False)
     recipient = models.CharField(max_length=30)
