@@ -11,10 +11,10 @@ class BankCardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BankCard
-        fields = ('id', 'holder', 'balance', 'currency_code', 'number')
+        fields = ('holder', 'balance', 'currency_code', 'number')
 
     def get_currency_code(self, obj):
-        return (obj.bank_account and obj.bank_account.currency and obj.bank_account.currency.code) or None
+        return obj.bank_account.currency.code
 
     def get_balance(self, obj):
-        return (obj.bank_account and obj.bank_account.balance) or 0
+        return obj.bank_account.balance

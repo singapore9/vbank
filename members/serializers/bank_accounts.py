@@ -8,4 +8,4 @@ from members.models.bank_accounts import BankAccount
 class BankAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = BankAccount
-        fields = ('id', 'number', 'balance', 'currency', 'holder')
+        fields = ('number', 'balance', 'currency', 'holder')

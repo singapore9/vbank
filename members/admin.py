@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from members.models.bank_accounts import BankAccount
 from members.models.bank_cards import BankCard
+from members.models.charges import ExternalCharge, CardCharge
 from members.models.currencies import Currency
 from members.models.members import Member
 
@@ -34,14 +35,37 @@ class MemberAdmin(UserAdmin):
 class CurrencyAdmin(admin.ModelAdmin):
     list_display = ('code', 'country', 'exchange_rate')
 
+    def get_readonly_fields(self, request, obj=None):
+        return ['code', ] if obj else []
+
 
 @admin.register(BankAccount)
 class BankAccountAdmin(admin.ModelAdmin):
-    list_display = ('id', 'holder', 'number', 'balance', 'currency')
-
+    list_display = ('holder', 'number', 'balance', 'currency')
     list_filter = ('holder', 'currency')
+
+    def get_readonly_fields(self, request, obj=None):
+        return ['number', 'holder'] if obj else []
 
 
 @admin.register(BankCard)
 class BankCardAdmin(admin.ModelAdmin):
-    list_display = ('id', 'holder', 'number')
+    list_display = ('holder', 'number')
+
+    def get_readonly_fields(self, request, obj=None):
+        return ['holder', 'number'] if obj else []
+
+
+class BaseChargeAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'value', 'recipient', 'created_at')
+    readonly_fields = ('sender', 'value', 'recipient', )
+
+
+@admin.register(ExternalCharge)
+class ExternalChargeAdmin(BaseChargeAdmin):
+    pass
+
+
+@admin.register(CardCharge)
+class CardChargeAdmin(BaseChargeAdmin):
+    pass

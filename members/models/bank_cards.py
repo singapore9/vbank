@@ -7,7 +7,7 @@ from members.models.members import Member
 
 
 class BankCard(models.Model):
-    number = models.CharField(max_length=30)
+    number = models.CharField(max_length=30, primary_key=True)
     bank_account = models.ForeignKey(BankAccount)
     holder = models.ForeignKey(Member, on_delete=models.CASCADE)
 
