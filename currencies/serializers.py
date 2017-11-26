@@ -9,4 +9,4 @@ class CurrencySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Currency
-        fields = ('code', 'country', 'exchange_rate')
+        fields = ('code', 'country', 'sale_rate', 'purchase_rate')

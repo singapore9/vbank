@@ -22,8 +22,8 @@ class BankCard(models.Model):
         return ExternalTransfer.objects.filter(sender=self.pk).filter(is_favourite=True)
 
     def favourite_internal_transfers(self):
-        from transfers.models import CardTransfer
+        from transfers.models import InternalTransfer
 
         if not self.pk:
-            return CardTransfer.objects.none()
-        return CardTransfer.objects.filter(sender=self.pk).filter(is_favourite=True)
+            return InternalTransfer.objects.none()
+        return InternalTransfer.objects.filter(sender=self.pk).filter(is_favourite=True)

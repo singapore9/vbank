@@ -14,7 +14,7 @@ class TransferBase(models.Model):
         abstract = True
 
 
-class CardTransfer(TransferBase):
+class InternalTransfer(TransferBase):
     sender = models.ForeignKey(BankCard, related_name='outgoing_transfers')
     recipient = models.ForeignKey(BankCard, related_name='incoming_transfers')
 

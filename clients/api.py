@@ -6,7 +6,7 @@ from custom_auth.permissions import UserIsAuthenticated
 from clients.models.bank_cards import BankAccount, BankCard
 from clients.serializers.bank_accounts import BankAccountSerializer
 from clients.serializers.bank_cards import BankCardSerializer
-from transfers.serializers import CardTransferSerializer, ExternalTransferSerializer
+from transfers.serializers import InternalTransferSerializer, ExternalTransferSerializer
 
 
 class OwnerViewSetMixin(mixins.RetrieveModelMixin,
@@ -36,7 +36,7 @@ class BankCardViewSet(OwnerViewSetMixin):
         data.update([('sender', card.number), ])
 
         is_external = request.GET.get('external', False)
-        transfer_serializer_class = ExternalTransferSerializer if is_external else CardTransferSerializer
+        transfer_serializer_class = ExternalTransferSerializer if is_external else InternalTransferSerializer
 
         serializer = transfer_serializer_class(data=data)
         serializer.is_valid(raise_exception=True)

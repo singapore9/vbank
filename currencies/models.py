@@ -6,7 +6,8 @@ from django.db import models
 class Currency(models.Model):
     code = models.CharField(max_length=3, primary_key=True)
     country = models.CharField(max_length=50)
-    exchange_rate = models.FloatField(help_text='Exchange rate against the BYN')
+    sale_rate = models.FloatField(help_text='against the BYN')
+    purchase_rate = models.FloatField(help_text='against the BYN')
 
     class Meta:
         verbose_name_plural = "currencies"

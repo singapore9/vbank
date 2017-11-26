@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from transfers.models import ExternalTransfer, CardTransfer
+from transfers.models import ExternalTransfer, InternalTransfer
 
 
 class BaseTransferAdmin(admin.ModelAdmin):
@@ -13,6 +13,6 @@ class ExternalTransferAdmin(BaseTransferAdmin):
     pass
 
 
-@admin.register(CardTransfer)
-class CardTransferAdmin(BaseTransferAdmin):
+@admin.register(InternalTransfer)
+class InternalTransferAdmin(BaseTransferAdmin):
     pass

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from transfers.models import CardTransfer, ExternalTransfer
+from transfers.models import InternalTransfer, ExternalTransfer
 
 
 class TransferBaseSerializer(serializers.ModelSerializer):
@@ -21,24 +21,26 @@ class TransferBaseSerializer(serializers.ModelSerializer):
             raise ValidationError('Sender bank account has less money than in transfer.')
 
 
-class CardTransferSerializer(TransferBaseSerializer):
+class InternalTransferSerializer(TransferBaseSerializer):
     class Meta(TransferBaseSerializer.Meta):
-        model = CardTransfer
+        model = InternalTransfer
 
     def validate(self, attrs):
-        attrs = super(CardTransferSerializer, self).validate(attrs)
+        attrs = super(InternalTransferSerializer, self).validate(attrs)
         sender = attrs['sender']
         recipient = attrs['recipient']
         value = attrs['value']
 
         sender_account = sender.bank_account
         recipient_account = recipient.bank_account
-        if sender_account.currency != recipient_account.currency:
-            raise ValidationError('Currencies of bank accounts does not match.')
         self._validate_transfer_value(sender_account, value)
+        if sender_account.currency != recipient_account.currency:
+            received_value = value * sender_account.currency.purchase_rate / recipient_account.currency.sale_rate
+        else:
+            received_value = value
 
         sender_account.balance -= value
-        recipient_account.balance += value
+        recipient_account.balance += received_value
         sender_account.save()
         recipient_account.save()
         return attrs
