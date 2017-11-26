@@ -35,7 +35,7 @@ class InternalTransferSerializer(TransferBaseSerializer):
         recipient_account = recipient.bank_account
         self._validate_transfer_value(sender_account, value)
         if sender_account.currency != recipient_account.currency:
-            received_value = value * sender_account.currency.purchase_rate / recipient_account.currency.sale_rate
+            received_value = value * sender_account.currency.rate.purchase / recipient_account.currency.rate.sale
         else:
             received_value = value
 
