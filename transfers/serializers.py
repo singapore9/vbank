@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from members.models.transfers import CardTransfer, ExternalTransfer
+from transfers.models import CardTransfer, ExternalTransfer
 
 
 class TransferBaseSerializer(serializers.ModelSerializer):
@@ -19,6 +19,7 @@ class TransferBaseSerializer(serializers.ModelSerializer):
     def _validate_transfer_value(self, sender, val):
         if sender.balance < val:
             raise ValidationError('Sender bank account has less money than in transfer.')
+
 
 class CardTransferSerializer(TransferBaseSerializer):
     class Meta(TransferBaseSerializer.Meta):

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 
-from members.models import BankCard
+from members.models.bank_cards import BankCard
 
 
 class TransferBase(models.Model):

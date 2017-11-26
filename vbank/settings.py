@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'custom_auth',
     'members',
+    'transfers',
 ]
 
 MIDDLEWARE = [
