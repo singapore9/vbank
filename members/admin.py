@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from members.models.bank_accounts import BankAccount
 from members.models.bank_cards import BankCard
-from members.models.charges import ExternalCharge, CardCharge
+from members.models.transfers import ExternalTransfer, CardTransfer
 from members.models.currencies import Currency
 from members.models.members import Member
 
@@ -56,16 +56,16 @@ class BankCardAdmin(admin.ModelAdmin):
         return ['holder', 'number'] if obj else []
 
 
-class BaseChargeAdmin(admin.ModelAdmin):
+class BaseTransferAdmin(admin.ModelAdmin):
     list_display = ('sender', 'value', 'recipient', 'created_at')
     readonly_fields = ('sender', 'value', 'recipient', )
 
 
-@admin.register(ExternalCharge)
-class ExternalChargeAdmin(BaseChargeAdmin):
+@admin.register(ExternalTransfer)
+class ExternalTransferAdmin(BaseTransferAdmin):
     pass
 
 
-@admin.register(CardCharge)
-class CardChargeAdmin(BaseChargeAdmin):
+@admin.register(CardTransfer)
+class CardTransferAdmin(BaseTransferAdmin):
     pass

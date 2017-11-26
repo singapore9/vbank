@@ -8,7 +8,7 @@ from members.models import Currency
 from members.models.bank_cards import BankAccount, BankCard
 from members.serializers.bank_accounts import BankAccountSerializer
 from members.serializers.bank_cards import BankCardSerializer
-from members.serializers.charges import CardChargeSerializer, ExternalChargeSerializer
+from members.serializers.transfers import CardTransferSerializer, ExternalTransferSerializer
 from members.serializers.currencies import CurrencySerializer
 
 
@@ -33,22 +33,22 @@ class BankCardViewSet(OwnerViewSetMixin):
     _model = BankCard
 
     @detail_route(methods=['post'], permission_classes=[UserIsAuthenticated, ])
-    def charge(self, request, *args, **kwargs):
+    def transfer(self, request, *args, **kwargs):
         card = self.get_object()
         data = request.data
         data.update([('sender', card.number), ])
-        serializer = CardChargeSerializer(data=data)
+        serializer = CardTransferSerializer(data=data)
 
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @detail_route(methods=['post'], permission_classes=[UserIsAuthenticated, ], url_path='external-charge')
-    def external_charge(self, request, *args, **kwargs):
+    @detail_route(methods=['post'], permission_classes=[UserIsAuthenticated, ], url_path='external-transfer')
+    def external_transfer(self, request, *args, **kwargs):
         card = self.get_object()
         data = request.data
         data.update([('sender', card.number), ])
-        serializer = ExternalChargeSerializer(data=data)
+        serializer = ExternalTransferSerializer(data=data)
 
         serializer.is_valid(raise_exception=True)
         serializer.save()
