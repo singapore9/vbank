@@ -37,7 +37,7 @@ BACKEND_URL = os.environ['BACKEND_URL']
 
 # Application definition
 
-AUTH_USER_MODEL = 'members.Member'
+AUTH_USER_MODEL = 'clients.Member'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -51,9 +51,9 @@ INSTALLED_APPS = [
     'mailing',
     'rest_framework',
     'custom_auth',
-    'members',
+    'clients',
     'transfers',
-    'currencies',
+    'currencies'
 ]
 
 MIDDLEWARE = [

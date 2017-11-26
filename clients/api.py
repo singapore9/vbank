@@ -3,9 +3,9 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from custom_auth.permissions import UserIsAuthenticated
-from members.models.bank_cards import BankAccount, BankCard
-from members.serializers.bank_accounts import BankAccountSerializer
-from members.serializers.bank_cards import BankCardSerializer
+from clients.models.bank_cards import BankAccount, BankCard
+from clients.serializers.bank_accounts import BankAccountSerializer
+from clients.serializers.bank_cards import BankCardSerializer
 from transfers.serializers import CardTransferSerializer, ExternalTransferSerializer
 
 

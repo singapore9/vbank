@@ -2,9 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from members.models.bank_accounts import BankAccount
-from members.models.bank_cards import BankCard
-from members.models.members import Member
+from clients.models.bank_accounts import BankAccount
+from clients.models.bank_cards import BankCard
+from clients.models.members import Member
 
 
 @admin.register(Member)

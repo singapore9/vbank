@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 from currencies.models import Currency
-from members.models.members import Member
+from clients.models.members import Member
 
 
 class BankAccount(models.Model):

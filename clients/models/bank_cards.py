@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-from members.models.bank_accounts import BankAccount
-from members.models.members import Member
+from clients.models.bank_accounts import BankAccount
+from clients.models.members import Member
 
 
 class BankCard(models.Model):

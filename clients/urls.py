@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
-from members.api import BankAccountViewSet, BankCardViewSet
+from clients.api import BankAccountViewSet, BankCardViewSet
 
 router = DefaultRouter()
 router.register(r'bank-accounts', BankAccountViewSet, 'bank-accounts')

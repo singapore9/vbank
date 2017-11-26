@@ -17,13 +17,13 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from custom_auth.urls import api_patterns as custom_auth_api
-from members.urls import api_patterns as bank_actions_api
+from clients.urls import api_patterns as client_actions_api
 from currencies.urls import api_patterns as currencies_api
 
 
 api_patterns = [] + \
                custom_auth_api + \
-               bank_actions_api + \
+               client_actions_api + \
                currencies_api
 
 urlpatterns = [
