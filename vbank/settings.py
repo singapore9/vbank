@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'custom_auth',
     'members',
     'transfers',
+    'currencies',
 ]
 
 MIDDLEWARE = [

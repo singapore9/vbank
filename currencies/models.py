@@ -8,5 +8,8 @@ class Currency(models.Model):
     country = models.CharField(max_length=50)
     exchange_rate = models.FloatField(help_text='Exchange rate against the BYN')
 
+    class Meta:
+        verbose_name_plural = "currencies"
+
     def __str__(self):
         return '{code} ({country})'.format(code=self.code, country=self.country)

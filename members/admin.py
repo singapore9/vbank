@@ -4,7 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from members.models.bank_accounts import BankAccount
 from members.models.bank_cards import BankCard
-from members.models.currencies import Currency
 from members.models.members import Member
 
 
@@ -28,14 +27,6 @@ class MemberAdmin(UserAdmin):
     search_fields = ('first_name', 'last_name', 'middle_name', 'email', )
     readonly_fields = ('last_login', 'date_joined')
     ordering = ('-id',)
-
-
-@admin.register(Currency)
-class CurrencyAdmin(admin.ModelAdmin):
-    list_display = ('code', 'country', 'exchange_rate')
-
-    def get_readonly_fields(self, request, obj=None):
-        return ['code', ] if obj else []
 
 
 @admin.register(BankAccount)
