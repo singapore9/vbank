@@ -16,34 +16,17 @@ class TransferBaseSerializer(serializers.ModelSerializer):
     def get_currency_code(self, obj):
         return obj.sender.bank_account.currency.code
 
-    def _validate_transfer_value(self, sender, val):
+    def validate(self, attrs):
+        sender = attrs['sender']
+        val = attrs['value']
         if sender.balance < val:
             raise ValidationError('Sender bank account has less money than in transfer.')
+        return attrs
 
 
 class InternalTransferSerializer(TransferBaseSerializer):
     class Meta(TransferBaseSerializer.Meta):
         model = InternalTransfer
-
-    def validate(self, attrs):
-        attrs = super(InternalTransferSerializer, self).validate(attrs)
-        sender = attrs['sender']
-        recipient = attrs['recipient']
-        value = attrs['value']
-
-        sender_account = sender.bank_account
-        recipient_account = recipient.bank_account
-        self._validate_transfer_value(sender_account, value)
-        if sender_account.currency != recipient_account.currency:
-            received_value = value * sender_account.currency.rate.purchase / recipient_account.currency.rate.sale
-        else:
-            received_value = value
-
-        sender_account.balance -= value
-        recipient_account.balance += received_value
-        sender_account.save()
-        recipient_account.save()
-        return attrs
 
 
 class ExternalTransferSerializer(TransferBaseSerializer):
@@ -52,14 +35,9 @@ class ExternalTransferSerializer(TransferBaseSerializer):
 
     def validate(self, attrs):
         attrs = super(ExternalTransferSerializer, self).validate(attrs)
-        sender = attrs['sender']
-        value = attrs['value']
 
+        sender = attrs['sender']
         sender_account = sender.bank_account
         if sender_account.currency.code != 'BYN':
             raise ValidationError('External transfers available only in BYN.')
-        self._validate_transfer_value(sender_account, value)
-
-        sender_account.balance -= value
-        sender_account.save()
         return attrs
