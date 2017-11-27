@@ -19,12 +19,14 @@ from django.contrib import admin
 from custom_auth.urls import api_patterns as custom_auth_api
 from clients.urls import api_patterns as client_actions_api
 from currencies.urls import api_patterns as currencies_api
+from transfers.urls import api_patterns as transfers_api
 
 
 api_patterns = [] + \
                custom_auth_api + \
                client_actions_api + \
-               currencies_api
+               currencies_api + \
+               transfers_api
 
 urlpatterns = [
     url(r'^api/', include(api_patterns)),

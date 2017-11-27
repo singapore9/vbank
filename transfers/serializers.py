@@ -28,9 +28,18 @@ class InternalTransferSerializer(TransferBaseSerializer):
     class Meta(TransferBaseSerializer.Meta):
         model = InternalTransfer
 
+    def validate(self, attrs):
+        attrs = super(ExternalTransferSerializer, self).validate(attrs)
+
+        sender = attrs['sender']
+        recipient = attrs['recipient']
+        if sender.bank_account == recipient.bank_account:
+            raise ValidationError('Can not create transfer from bank account to the same one.')
+
 
 class ExternalTransferSerializer(TransferBaseSerializer):
     class Meta(TransferBaseSerializer.Meta):
+        fields = TransferBaseSerializer.Meta.fields + ('is_favourite', )
         model = ExternalTransfer
 
     def validate(self, attrs):
