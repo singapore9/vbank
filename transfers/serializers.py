@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from mailing.shortcuts import render_send_email
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -24,6 +25,38 @@ class TransferBaseSerializer(serializers.ModelSerializer):
             raise ValidationError('Sender bank account has less money than in transfer.')
         return attrs
 
+    def create(self, validated_data):
+        sender_account = validated_data['sender'].bank_account
+        value = validated_data['value']
+
+        sender_account.balance -= value
+        sender_account.save()
+
+        for_send_notification = [sender_account.email, ]
+
+        try:
+            recipient_account = validated_data['recipient'].bank_account
+            transfer_type = 'External'
+            for_send_notification += [recipient_account.email, ]
+        except AttributeError:
+            transfer_type = 'Internal'
+
+        for destination in for_send_notification:
+            context = {
+                'transfer_type': transfer_type,
+                'sender': sender_account,
+                'is_sender': destination == sender_account.email,
+                'amount': value,
+                'code': sender_account.currency.code,
+                'recipient': validated_data['recipient']
+            }
+            render_send_email(recipients=[destination, ],
+                              template='email/transfer_notification/transfer_notification',
+                              data=context,
+                              use_base_template=False)
+
+        return super(TransferBaseSerializer, self).create(validated_data)
+
 
 class InternalTransferSerializer(TransferBaseSerializer):
     class Meta(TransferBaseSerializer.Meta):
@@ -36,6 +69,20 @@ class InternalTransferSerializer(TransferBaseSerializer):
         recipient = attrs['recipient']
         if sender.bank_account == recipient.bank_account:
             raise ValidationError('Can not create transfer from bank account to the same one.')
+
+    def create(self, validated_data):
+        sender_account = validated_data['sender'].bank_account
+        recipient_account = validated_data['recipient'].bank_account
+        value = validated_data['value']
+
+        if sender_account.currency != recipient_account.currency:
+            received_value = value * sender_account.currency.rate.purchase / recipient_account.currency.rate.sale
+        else:
+            received_value = value
+        recipient_account.balance += received_value
+        recipient_account.save()
+
+        return super(InternalTransferSerializer, self).create(validated_data)
 
 
 class ExternalTransferSerializer(TransferBaseSerializer):
