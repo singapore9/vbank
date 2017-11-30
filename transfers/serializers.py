@@ -32,12 +32,12 @@ class TransferBaseSerializer(serializers.ModelSerializer):
         sender_account.balance -= value
         sender_account.save()
 
-        for_send_notification = [sender_account.email, ]
+        for_send_notification = [sender_account.holder.email, ]
 
         try:
             recipient_account = validated_data['recipient'].bank_account
             transfer_type = 'External'
-            for_send_notification += [recipient_account.email, ]
+            for_send_notification += [recipient_account.holder.email, ]
         except AttributeError:
             transfer_type = 'Internal'
 
@@ -45,7 +45,7 @@ class TransferBaseSerializer(serializers.ModelSerializer):
             context = {
                 'transfer_type': transfer_type,
                 'sender': sender_account,
-                'is_sender': destination == sender_account.email,
+                'is_sender': destination == sender_account.holder.email,
                 'amount': value,
                 'code': sender_account.currency.code,
                 'recipient': validated_data['recipient']
@@ -69,6 +69,7 @@ class InternalTransferSerializer(TransferBaseSerializer):
         recipient = attrs['recipient']
         if sender.bank_account == recipient.bank_account:
             raise ValidationError('Can not create transfer from bank account to the same one.')
+        return attrs
 
     def create(self, validated_data):
         sender_account = validated_data['sender'].bank_account
@@ -76,7 +77,7 @@ class InternalTransferSerializer(TransferBaseSerializer):
         value = validated_data['value']
 
         if sender_account.currency != recipient_account.currency:
-            received_value = value * sender_account.currency.rate.purchase / recipient_account.currency.rate.sale
+            received_value = value * sender_account.currency.rate().purchase / recipient_account.currency.rate().sale
         else:
             received_value = value
         recipient_account.balance += received_value

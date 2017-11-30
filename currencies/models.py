@@ -14,7 +14,7 @@ class Currency(models.Model):
         return '{code} ({country})'.format(code=self.code, country=self.country)
 
     def rate(self):
-        return Currency.rates.first()
+        return self.rates.first()
 
 
 class CurrencyRate(models.Model):
