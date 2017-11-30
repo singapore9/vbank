@@ -30,7 +30,7 @@ class InternalTransferSerializer(TransferBaseSerializer):
         model = InternalTransfer
 
     def validate(self, attrs):
-        attrs = super(ExternalTransferSerializer, self).validate(attrs)
+        attrs = super(InternalTransferSerializer, self).validate(attrs)
 
         sender = attrs['sender']
         recipient = attrs['recipient']
