@@ -1,3 +1,0 @@
-{{ transfer_type }} transfer:
-
-{{ sender }} {% if is_sender %}(You) {% endif %} send {{ amount }} {{ code }} to {{ recipient }}{% if not is_sender %} (You){% endif %}.

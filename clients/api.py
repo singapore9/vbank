@@ -7,6 +7,7 @@ from custom_auth.permissions import UserIsAuthenticated
 from clients.models.bank_cards import BankAccount, BankCard
 from clients.serializers.bank_accounts import BankAccountSerializer
 from clients.serializers.bank_cards import BankCardSerializer
+from transfers.models import ExternalTransfer
 from transfers.serializers import InternalTransferSerializer, ExternalTransferSerializer
 
 
@@ -41,7 +42,7 @@ class BankCardViewSet(OwnerViewSetMixin):
 
         serializer = transfer_serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.create(serializer.validated_data)
 
         sender_account = serializer.validated_data['sender'].bank_account
         value = serializer.validated_data['value']
@@ -72,6 +73,9 @@ class BankCardViewSet(OwnerViewSetMixin):
                 'code': sender_account.currency.code,
                 'recipient': serializer.validated_data['recipient']
             }
-            render_send_email([destination], '/email/transfer_notification/transfer_notification', context, use_base_template=False)
+            render_send_email(recipients=[destination, ],
+                              template='email/transfer_notification/transfer_notification',
+                              data=context,
+                              use_base_template=False)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)

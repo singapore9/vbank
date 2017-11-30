@@ -12,14 +12,15 @@ class TransferBaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'sender', 'value', 'currency_code', 'recipient')
+        read_only_fields = ('id', )
 
     def get_currency_code(self, obj):
-        return obj.sender.bank_account.currency.code
+        return obj['sender'].bank_account.currency.code
 
     def validate(self, attrs):
         sender = attrs['sender']
         val = attrs['value']
-        if sender.balance < val:
+        if sender.bank_account.balance < val:
             raise ValidationError('Sender bank account has less money than in transfer.')
         return attrs
 
@@ -38,6 +39,8 @@ class InternalTransferSerializer(TransferBaseSerializer):
 
 
 class ExternalTransferSerializer(TransferBaseSerializer):
+    is_favourite = serializers.BooleanField(default=False)
+
     class Meta(TransferBaseSerializer.Meta):
         fields = TransferBaseSerializer.Meta.fields + ('is_favourite', )
         model = ExternalTransfer

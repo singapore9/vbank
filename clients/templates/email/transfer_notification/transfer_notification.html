@@ -1,0 +1,15 @@
+{% extends "email/email_base.html" %}
+{% block caption %}
+    <p class="heading">
+	    {{ transfer_type }} transfer:
+    </p>
+{% endblock %}
+{% block content %}
+    <p>{{ sender }} {% if is_sender %}(You) {% endif %} send {{ amount }} {{ code }} to {{ recipient }}{% if not is_sender %} (You){% endif %}.<br/></p>
+    <br/>
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block notification %}
+{% endblock %}
+
