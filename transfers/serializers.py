@@ -16,7 +16,7 @@ class TransferBaseSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', )
 
     def get_currency_code(self, obj):
-        return obj['sender'].bank_account.currency.code
+        return obj.sender.bank_account.currency.code
 
     def validate(self, attrs):
         sender = attrs['sender']
@@ -87,10 +87,10 @@ class InternalTransferSerializer(TransferBaseSerializer):
 
 
 class ExternalTransferSerializer(TransferBaseSerializer):
-    is_favourite = serializers.BooleanField(default=False)
+    is_favorite = serializers.BooleanField(default=False)
 
     class Meta(TransferBaseSerializer.Meta):
-        fields = TransferBaseSerializer.Meta.fields + ('is_favourite', )
+        fields = TransferBaseSerializer.Meta.fields + ('is_favorite', )
         model = ExternalTransfer
 
     def validate(self, attrs):

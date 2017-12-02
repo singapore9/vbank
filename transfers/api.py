@@ -15,18 +15,7 @@ class BaseTransfersViewSet(mixins.RetrieveModelMixin,
     _model = None
 
     def get_queryset(self):
-        client = self.request.user
-
         queryset = self._model.objects.all()
-
-        incoming = self.request.query_params.get('incoming', False)
-        if incoming:
-            try:
-                queryset = queryset.filter(recipient__holder=client)
-            except FieldDoesNotExist:
-                pass
-        else:
-            queryset = queryset.filter(sender__holder=client)
 
         _from = self.request.query_params.get('from', None)
         _to = self.request.query_params.get('to', None)
@@ -43,7 +32,31 @@ class InternalTransfersViewSet(BaseTransfersViewSet):
     serializer_class = InternalTransferSerializer
     _model = InternalTransfer
 
+    def get_queryset(self):
+        queryset = super(InternalTransfersViewSet, self).get_queryset()
+        client = self.request.user
+
+        incoming = str(self.request.query_params.get('incoming', False))
+        if incoming.lower() == 'false':
+            queryset = queryset.filter(sender__holder=client)
+        else:
+            try:
+                queryset = queryset.filter(recipient__holder=client)
+            except FieldDoesNotExist:
+                pass
+        return queryset
+
 
 class ExternalTransfersViewSet(BaseTransfersViewSet):
     serializer_class = ExternalTransferSerializer
     _model = ExternalTransfer
+
+    def get_queryset(self):
+        queryset = super(ExternalTransfersViewSet, self).get_queryset()
+        client = self.request.user
+
+        queryset = queryset.filter(sender__holder=client)
+        favorite = str(self.request.query_params.get('favorite', True))
+        if favorite.lower() == 'true':
+            queryset = queryset.filter(is_favorite=True)
+        return queryset
