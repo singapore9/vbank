@@ -167,7 +167,7 @@ REST_FRAMEWORK = {
 # Token age setting
 MUTABLE_PERIOD = 60 * 0  # 0 minute
 TOKEN_AGE = 60 * 10  # 10 minutes
-UPDATE_TOKEN = True
+UPDATE_TOKEN = False
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
