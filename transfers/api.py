@@ -22,11 +22,11 @@ class BaseTransfersViewSet(mixins.RetrieveModelMixin,
         incoming = self.request.query_params.get('incoming', False)
         if incoming:
             try:
-                queryset = queryset.filter(recipient=client)
+                queryset = queryset.filter(recipient__holder=client)
             except FieldDoesNotExist:
                 pass
         else:
-            queryset = queryset.filter(sender=client)
+            queryset = queryset.filter(sender__holder=client)
 
         _from = self.request.query_params.get('from', None)
         _to = self.request.query_params.get('to', None)
