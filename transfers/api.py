@@ -56,7 +56,7 @@ class ExternalTransfersViewSet(BaseTransfersViewSet):
         client = self.request.user
 
         queryset = queryset.filter(sender__holder=client)
-        favorite = str(self.request.query_params.get('favorite', True))
+        favorite = str(self.request.query_params.get('favorite', False))
         if favorite.lower() == 'true':
             queryset = queryset.filter(is_favorite=True)
         return queryset
