@@ -16,7 +16,12 @@ class TransferBaseSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', )
 
     def get_currency_code(self, obj):
-        return obj.sender.bank_account.currency.code
+        sender = None
+        try:
+            sender = obj['sender']
+        except Exception:
+            sender = obj.sender
+        return sender.bank_account.currency.code
 
     def validate(self, attrs):
         sender = attrs['sender']
