@@ -156,7 +156,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         'rest_framework.permissions.IsAdminUser',
     ),
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 10000,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'drf_secure_token.authentication.SecureTokenAuthentication',
     ),
