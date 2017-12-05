@@ -72,7 +72,7 @@ class UserAuthViewSet(viewsets.ViewSet):
         serializer = self.get_login_serializer()
         serializer.is_valid(raise_exception=True)
         self.user = serializer.authenticate(roles)
-        self._remove_tokens(self.user)
+        # self._remove_tokens(self.user)
         return Response(status=status.HTTP_201_CREATED,
                         headers=self.get_success_headers(),
                         data=MiniUserSerializer(instance=self.user).data)
