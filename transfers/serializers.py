@@ -23,6 +23,11 @@ class TransferBaseSerializer(serializers.ModelSerializer):
             sender = obj.sender
         return sender.bank_account.currency.code
 
+    def validate_value(self, val):
+        if val <= 0:
+            raise ValidationError('Transfer\'s value must be more than 0')
+        return val
+
     def validate(self, attrs):
         sender = attrs['sender']
         val = attrs['value']
@@ -41,10 +46,10 @@ class TransferBaseSerializer(serializers.ModelSerializer):
 
         try:
             recipient_account = validated_data['recipient'].bank_account
-            transfer_type = 'External'
+            transfer_type = 'Internal'
             for_send_notification += [recipient_account.holder.email, ]
         except AttributeError:
-            transfer_type = 'Internal'
+            transfer_type = 'External'
 
         for destination in for_send_notification:
             context = {

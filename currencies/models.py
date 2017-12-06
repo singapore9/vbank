@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django.core.validators import MinValueValidator
 from django.db import models
 
 
@@ -20,8 +21,8 @@ class Currency(models.Model):
 class CurrencyRate(models.Model):
     date = models.DateField()
     currency = models.ForeignKey(Currency, related_name='rates')
-    sale = models.FloatField(help_text='against the BYN')
-    purchase = models.FloatField(help_text='against the BYN')
+    sale = models.FloatField(help_text='against the BYN', validators=[MinValueValidator(0)])
+    purchase = models.FloatField(help_text='against the BYN', validators=[MinValueValidator(0)])
 
     class Meta:
         ordering = ['-date']
