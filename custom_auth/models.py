@@ -12,6 +12,8 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import ugettext_lazy as _
 
+from custom_auth.validators import not_future_validator, age_validator, NameValidator
+
 
 class PasswordTokenMixin(object):
     def _get_token_url(self, token_generator, reset_name):
@@ -103,12 +105,24 @@ class ApplicationUser(AbstractBaseUser, PermissionsMixin, ResetPasswordMixin, Co
             'unique': _("A user with that username already exists."),
         },
     )
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    middle_name = models.CharField(_('middle name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    first_name = models.CharField(
+        _('first name'),
+        max_length=30,
+        validators=[NameValidator('First name'), ]
+    )
+    middle_name = models.CharField(
+        _('middle name'),
+        max_length=30,
+        validators=[NameValidator('Middle name'), ]
+    )
+    last_name = models.CharField(
+        _('last name'),
+        max_length=30,
+        validators=[NameValidator('Last name'), ]
+    )
     email = models.EmailField(_('email address'), unique=True, blank=False, null=False)
-    birthday = models.DateField(null=True)
-    residence_address = models.CharField(_('residence address'), max_length=255, blank=True)
+    birthday = models.DateField(validators=[not_future_validator, age_validator])
+    residence_address = models.CharField(_('residence address'), max_length=255)
 
     is_staff = models.BooleanField(
         _('staff status'),
