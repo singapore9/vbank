@@ -121,7 +121,7 @@ class ApplicationUser(AbstractBaseUser, PermissionsMixin, ResetPasswordMixin, Co
         validators=[NameValidator('Last name'), ]
     )
     email = models.EmailField(_('email address'), unique=True, blank=False, null=False)
-    birthday = models.DateField(validators=[not_future_validator, age_validator])
+    birthday = models.DateField()
     residence_address = models.CharField(_('residence address'), max_length=255)
 
     is_staff = models.BooleanField(
