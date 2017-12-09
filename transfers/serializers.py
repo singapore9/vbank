@@ -4,7 +4,18 @@ from mailing.shortcuts import render_send_email
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from clients.models import BankCard
 from transfers.models import InternalTransfer, ExternalTransfer
+
+from django.utils.translation import ugettext_lazy as _
+from rest_framework.relations import PrimaryKeyRelatedField
+
+
+class PrimaryKeyWithAliasRelatedField(PrimaryKeyRelatedField):
+    def __init__(self, field_name, *args, **kwargs):
+        super(PrimaryKeyWithAliasRelatedField, self).__init__(*args, **kwargs)
+        PrimaryKeyWithAliasRelatedField.default_error_messages['does_not_exist'] = \
+            _('Invalid %s "{pk_value}" - object does not exist.' % (field_name, ))
 
 
 class TransferBaseSerializer(serializers.ModelSerializer):
@@ -69,6 +80,8 @@ class TransferBaseSerializer(serializers.ModelSerializer):
 
 
 class InternalTransferSerializer(TransferBaseSerializer):
+    recipient = PrimaryKeyWithAliasRelatedField(field_name='recipient', queryset=BankCard.objects.all(), required=True)
+
     class Meta(TransferBaseSerializer.Meta):
         model = InternalTransfer
 
