@@ -15,7 +15,7 @@ class PrimaryKeyWithAliasRelatedField(PrimaryKeyRelatedField):
     def __init__(self, field_name, *args, **kwargs):
         super(PrimaryKeyWithAliasRelatedField, self).__init__(*args, **kwargs)
         PrimaryKeyWithAliasRelatedField.default_error_messages['does_not_exist'] = \
-            _('Invalid %s "{pk_value}" - object does not exist.' % (field_name, ))
+            _('Invalid %s "{pk_value}"' % (field_name, ))
 
 
 class TransferBaseSerializer(serializers.ModelSerializer):

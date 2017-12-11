@@ -9,8 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 @deconstructible
 class NameValidator(RegexValidator):
     def __init__(self, field_name='Name'):
-        self.message = '%s must contain only letters, spaces and _ characters.' % (field_name, )
-        super(NameValidator, self).__init__(regex=r'^[A-Z][a-zA-Z\-]*$')
+        self.message = '%s must contain only letters, spaces and _ characters. First letter must be capital.' % (field_name, )
+        super(NameValidator, self).__init__(regex=r'^[A-Z][a-zA-Z\-\s]*$')
 
 
 def not_future_validator(value):
