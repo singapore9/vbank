@@ -14,9 +14,9 @@ class BankAccount(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.number:
-            self.number = 'BYAKVB{user:0>13}{currency:0>3}{account:0>4}'.format(user=self.holder.pk,
-                                                                                currency=self.currency.code,
-                                                                                account=BankAccount.objects.count())
+            self.number = 'BY82AKVB{user:0>7}{account:0>6}{currency:0>3}0000'.format(user=self.holder.pk,
+                                                                                   currency=self.currency.code,
+                                                                                   account=BankAccount.objects.count())
         return super(BankAccount, self).save(*args, **kwargs)
 
     def __str__(self):

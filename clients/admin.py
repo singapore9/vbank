@@ -63,8 +63,9 @@ class HolderRawIdWidget(widgets.ForeignKeyRawIdWidget):
 class BankAccountAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['holder'].queryset = Member.objects.filter(role=Member.CLIENT)
-        self.fields['holder'].widget = HolderRawIdWidget(rel=BankAccount._meta.get_field('holder').rel, admin_site=site)
+        if self.fields.get('holder'):
+            self.fields['holder'].queryset = Member.objects.filter(role=Member.CLIENT)
+            self.fields['holder'].widget = HolderRawIdWidget(rel=BankAccount._meta.get_field('holder').rel, admin_site=site)
 
     class Meta:
         fields = '__all__'
