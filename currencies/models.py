@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 
 class Currency(models.Model):
@@ -15,7 +16,7 @@ class Currency(models.Model):
         return '{code} ({country})'.format(code=self.code, country=self.country)
 
     def rate(self):
-        return self.rates.first()
+        return self.rates.filter(date__lte=timezone.now()).first()
 
 
 class CurrencyRate(models.Model):
