@@ -14,7 +14,7 @@ make_confirmed_by_bank.short_description = "Confirm by bank manager"
 
 
 def make_nonconfirmed_by_bank(modeladmin, request, queryset):
-    queryset.update(is_active=False)
+    queryset.filter(role=Member.CLIENT).update(is_active=False)
 make_nonconfirmed_by_bank.short_description = "Remove confirmation by bank manager"
 
 
