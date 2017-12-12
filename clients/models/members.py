@@ -40,6 +40,13 @@ class Member(ApplicationUser):
     class Meta:
         verbose_name = 'member'
 
+    def save(self, *args, **kwargs):
+        if self.role == Member.MANAGER:
+            from django.contrib.auth.models import Group
+            g, _ = Group.objects.get_or_create(name='bank_admin')
+            g.user_set.add(self)
+        return super(Member, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return u'{role} {name}'.format(role=self.get_role_display(), name=self.get_full_name())
 
