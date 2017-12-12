@@ -54,6 +54,7 @@ class MemberAdmin(UserAdmin):
 class BankAccountAdmin(admin.ModelAdmin):
     list_display = ('holder', 'number', 'balance', 'currency')
     list_filter = ('holder', 'currency')
+    raw_id_fields = ('holder', )
 
     def get_readonly_fields(self, request, obj=None):
         return ['number', 'holder', 'currency'] if obj else ['number', ]
@@ -62,6 +63,7 @@ class BankAccountAdmin(admin.ModelAdmin):
 @admin.register(BankCard)
 class BankCardAdmin(admin.ModelAdmin):
     list_display = ('holder', 'number')
+    raw_id_fields = ('bank_account', )
 
     def get_readonly_fields(self, request, obj=None):
         return ['holder', 'number', 'bank_account'] if obj else ['number', 'holder']
