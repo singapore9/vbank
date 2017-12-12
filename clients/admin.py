@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.admin import widgets
+from django.contrib.admin.sites import site
+from django import forms
 
 from clients.models.bank_accounts import BankAccount
 from clients.models.bank_cards import BankCard
@@ -50,9 +53,29 @@ class MemberAdmin(UserAdmin):
             return ['last_login', 'date_joined']
 
 
+class HolderRawIdWidget(widgets.ForeignKeyRawIdWidget):
+    def url_parameters(self):
+        res = super().url_parameters()
+        res['role__exact'] = Member.CLIENT
+        return res
+
+
+class BankAccountAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['holder'].queryset = Member.objects.filter(role=Member.CLIENT)
+        self.fields['holder'].widget = HolderRawIdWidget(rel=BankAccount._meta.get_field('holder').rel, admin_site=site)
+
+    class Meta:
+        fields = '__all__'
+        model = BankAccount
+
+
 @admin.register(BankAccount)
 class BankAccountAdmin(admin.ModelAdmin):
+    form = BankAccountAdminForm
     list_display = ('holder', 'number', 'balance', 'currency')
+    search_fields = ('holder__email', 'holder__first_name', 'holder__last_name', 'holder__middle_name', 'number')
     list_filter = ('holder', 'currency')
     raw_id_fields = ('holder', )
 
@@ -63,6 +86,8 @@ class BankAccountAdmin(admin.ModelAdmin):
 @admin.register(BankCard)
 class BankCardAdmin(admin.ModelAdmin):
     list_display = ('holder', 'number')
+    search_fields = ('holder__email', 'holder__first_name', 'holder__last_name', 'holder__middle_name', 'number', 'bank_account__number')
+    list_filter = ('holder', 'bank_account')
     raw_id_fields = ('bank_account', )
 
     def get_readonly_fields(self, request, obj=None):
