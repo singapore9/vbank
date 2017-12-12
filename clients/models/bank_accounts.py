@@ -12,5 +12,12 @@ class BankAccount(models.Model):
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
     holder = models.ForeignKey(Member, on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        if not self.number:
+            self.number = 'BYAKVB{user:0>13}{currency:0>3}{account:0>4}'.format(user=self.holder.pk,
+                                                                                currency=self.currency.code,
+                                                                                account=BankAccount.objects.count())
+        return super(BankAccount, self).save(*args, **kwargs)
+
     def __str__(self):
-        return '{currency_code} {number}'.format(currency_code=self.currency.code, number=self.number)
+        return '{number} {user}'.format(number=self.number, user=self.holder)
