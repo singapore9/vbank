@@ -27,6 +27,7 @@ api_patterns = [] + \
                client_actions_api + \
                currencies_api + \
                transfers_api
+admin.site.site_header = 'VBank admin'
 
 urlpatterns = [
     url(r'^api/', include(api_patterns)),
