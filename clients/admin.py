@@ -16,9 +16,9 @@ def make_confirmed_by_bank(modeladmin, request, queryset):
 make_confirmed_by_bank.short_description = "Confirm by bank manager"
 
 
-def make_nonconfirmed_by_bank(modeladmin, request, queryset):
-    queryset.filter(role=Member.CLIENT).update(is_active=False)
-make_nonconfirmed_by_bank.short_description = "Remove confirmation by bank manager"
+def make_locked_by_bank(modeladmin, request, queryset):
+    queryset.filter(role=Member.CLIENT).update(is_locked=True)
+make_locked_by_bank.short_description = "Remove confirmation by bank manager"
 
 
 @admin.register(Member)
@@ -27,7 +27,7 @@ class MemberAdmin(UserAdmin):
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('last_name', 'first_name', 'middle_name', 'email', 'birthday',
                                          'residence_address')}),
-        (_('Permissions'), {'fields': ('role', 'is_active', 'is_confirmed', 'is_staff', 'is_superuser')}),
+        (_('Permissions'), {'fields': ('role', 'is_active', 'is_confirmed', 'is_locked', 'is_staff', 'is_superuser')}),
         (_('Important dates'), {'fields': ('date_joined', 'last_login')}),
     )
     add_fieldsets = (
@@ -41,7 +41,7 @@ class MemberAdmin(UserAdmin):
     search_fields = ('first_name', 'last_name', 'middle_name', 'email', )
     readonly_fields = ('last_login', 'date_joined')
     ordering = ('-id',)
-    actions = UserAdmin.actions + [make_confirmed_by_bank, make_nonconfirmed_by_bank]
+    actions = UserAdmin.actions + [make_confirmed_by_bank, make_locked_by_bank]
 
     def get_readonly_fields(self, request, obj=None):
         g = Group.objects.filter(name='bank_admin')

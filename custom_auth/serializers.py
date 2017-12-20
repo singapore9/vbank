@@ -15,9 +15,14 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(**self.validated_data)
         from_db = AuthUserModel.objects.filter(email=self.validated_data['username'])
         if from_db.exists() and not from_db.first().is_active:
-            raise serializers.ValidationError({
-                api_settings.NON_FIELD_ERRORS_KEY: ["The user is not confirmed by bank employee."]
-            })
+            if from_db.first().is_locked:
+                raise serializers.ValidationError({
+                    api_settings.NON_FIELD_ERRORS_KEY: ["The user is locked by bank employee."]
+                })
+            else:
+                raise serializers.ValidationError({
+                    api_settings.NON_FIELD_ERRORS_KEY: ["The user is not confirmed by bank employee."]
+                })
         if not (user and any([getattr(user, role) for role in roles])):
             raise serializers.ValidationError({
                 api_settings.NON_FIELD_ERRORS_KEY: [self.fail_login_message],

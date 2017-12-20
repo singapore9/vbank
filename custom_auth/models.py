@@ -137,6 +137,13 @@ class ApplicationUser(AbstractBaseUser, PermissionsMixin, ResetPasswordMixin, Co
             'Unselect this instead of deleting accounts.'
         ),
     )
+    is_locked = models.BooleanField(
+        _('locked'),
+        default=False,
+        help_text=_(
+          'Used by bank employee for lock user\'s account.'
+        ),
+    )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
     USERNAME_FIELD = 'email'
