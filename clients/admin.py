@@ -36,7 +36,7 @@ class MemberAdmin(UserAdmin):
             'fields': ('username', 'email', 'password1', 'password2'),
         }),
     )
-    list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_confirmed')
+    list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_confirmed', 'is_locked')
     list_filter = ('role', 'is_active')
     search_fields = ('first_name', 'last_name', 'middle_name', 'email', )
     readonly_fields = ('last_login', 'date_joined')
