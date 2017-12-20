@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import widgets
 from django.contrib.admin.sites import site
 from django import forms
+from mailing.shortcuts import render_send_email
 
 from clients.models.bank_accounts import BankAccount
 from clients.models.bank_cards import BankCard
@@ -19,6 +21,19 @@ make_confirmed_by_bank.short_description = "Confirm by bank manager"
 def make_locked_by_bank(modeladmin, request, queryset):
     queryset.filter(role=Member.CLIENT).update(is_locked=True)
 make_locked_by_bank.short_description = "Lock by bank manager"
+
+
+class CustomAdminPasswordChangeForm(AdminPasswordChangeForm):
+
+    def save(self, commit=True):
+        password = self.cleaned_data["password1"]
+        user = super(CustomAdminPasswordChangeForm, self).save(commit)
+        context = {
+            'password': password
+        }
+        template_name = 'email/reset_pass/transfer_notification'
+        render_send_email([user.email], template_name, context, use_base_template=False)
+        return user
 
 
 @admin.register(Member)
@@ -41,6 +56,7 @@ class MemberAdmin(UserAdmin):
     search_fields = ('first_name', 'last_name', 'middle_name', 'email', )
     readonly_fields = ('last_login', 'date_joined')
     ordering = ('-id',)
+    change_password_form = CustomAdminPasswordChangeForm
     actions = UserAdmin.actions + [make_confirmed_by_bank, make_locked_by_bank]
 
     def get_readonly_fields(self, request, obj=None):

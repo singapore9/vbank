@@ -1,0 +1,3 @@
+New password is
+{{password}}
+Please change it.
