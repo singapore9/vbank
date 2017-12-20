@@ -16,10 +16,10 @@ from custom_auth.validators import not_future_validator, age_validator, NameVali
 
 
 class PasswordTokenMixin(object):
-    def _get_token_url(self, token_generator, reset_name):
+    def _get_token_url(self, token_generator):
         uid = urlsafe_base64_encode(force_bytes(self.pk))
         token = token_generator.make_token(self)
-        return '/{0}/{1}/{2}'.format(reset_name, uid, token)
+        return reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
 
 
 class SendMessageMixin(object):
@@ -44,14 +44,13 @@ class SendMessageMixin(object):
 
 class ResetPasswordMixin(PasswordTokenMixin, SendMessageMixin, models.Model):
     reset_password_email_template = 'email/reset_password/reset_password'
-    reset_name = 'reset'
     reset_password_token_generator = default_token_generator
 
     class Meta:
         abstract = True
 
     def get_password_reset_url(self):
-        return self._get_token_url(self.reset_password_token_generator, self.reset_name)
+        return self._get_token_url(self.reset_password_token_generator)
 
     def send_reset_password_email(self):
         self.send_email(self.reset_password_email_template, 'user')

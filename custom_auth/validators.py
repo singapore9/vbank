@@ -28,8 +28,7 @@ def age_validator(value):
 
 class HasLowerCasePasswordValidator(object):
     def validate(self, password, user=None):
-        regexp = re.compile(r'[a-z]')
-        if regexp.search(password):
+        if not re.search('[a-z]', password):
             raise ValidationError(
                 _("This password must contain at least 1 lowercase letter."),
                 code='password_without_lowercase_letters',
@@ -41,8 +40,7 @@ class HasLowerCasePasswordValidator(object):
 
 class HasUpperCasePasswordValidator(object):
     def validate(self, password, user=None):
-        regexp = re.compile(r'[A-Z]')
-        if regexp.search(password):
+        if not re.search('[A-Z]', password):
             raise ValidationError(
                 _("This password must contain at least 1 uppercase letter."),
                 code='password_without_uppercase_letters',
@@ -54,8 +52,7 @@ class HasUpperCasePasswordValidator(object):
 
 class HasDigitPasswordValidator(object):
     def validate(self, password, user=None):
-        regexp = re.compile(r'[0-9]')
-        if regexp.search(password):
+        if not re.search('[0-9]', password):
             raise ValidationError(
                 _("Password must contain at least 1 digit."),
                 code='password_without_digits',

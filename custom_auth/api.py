@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 
 from django.db.transaction import atomic
-from rest_framework import decorators, mixins, permissions, status, viewsets
-from rest_framework.decorators import detail_route
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
@@ -10,7 +10,29 @@ from django.contrib.auth import get_user_model
 from clients.serializers.members import UserSerializer, MiniUserSerializer
 
 from .permissions import IsSelfOrReadOnly, POSTOnlyIfAnonymous, UserIsAuthenticated
-from .serializers import UsernameLoginSerializer, ChangePasswordSerializer
+from .serializers import UsernameLoginSerializer, ChangePasswordSerializer, PasswordRecoverySrializer, \
+    ResetPasswordByEmailSerializer
+
+
+class ResetPasswordViewMixin(object):
+    reset_password_serializer_class = ResetPasswordByEmailSerializer
+
+    @list_route(methods=['post'], permission_classes=[permissions.AllowAny], url_path='reset-password')
+    def reset_password(self, request, **kwargs):
+        serializer = self.get_reset_password_serializer()
+        serializer.is_valid(raise_exception=True)
+        serializer.send_reset_password_email()
+        return Response()
+
+    @list_route(methods=['post'], permission_classes=[permissions.AllowAny], url_path='password-recovery')
+    def password_recovery(self, request, **kwargs):
+        serializer = PasswordRecoverySrializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response()
+
+    def get_reset_password_serializer(self, **kwargs):
+        return self.reset_password_serializer_class(data=self.request.data, **kwargs)
 
 
 class RetrieveSelfMixin(object):
@@ -25,6 +47,7 @@ class RetrieveSelfMixin(object):
 
 
 class UserViewSet(RetrieveSelfMixin,
+                  ResetPasswordViewMixin,
                   mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   mixins.CreateModelMixin,
@@ -85,7 +108,7 @@ class UserAuthViewSet(viewsets.ViewSet):
             tokens_for_delete = user.user_auth_tokens.filter(key=token)
         tokens_for_delete.delete()
 
-    @decorators.list_route(methods=['post'], permission_classes=[permissions.AllowAny], url_path='login-client')
+    @list_route(methods=['post'], permission_classes=[permissions.AllowAny], url_path='login-client')
     def login_client(self, request, roles=['is_client']):
         return self._basic_login(roles)
 
@@ -95,7 +118,7 @@ class UserAuthViewSet(viewsets.ViewSet):
     def get_success_headers(self):
         return {self.NEW_TOKEN_HEADER: self.user.user_auth_tokens.create()}
 
-    @decorators.list_route(methods=['delete'], permission_classes=[permissions.IsAuthenticated], url_path='logout')
+    @list_route(methods=['delete'], permission_classes=[permissions.IsAuthenticated], url_path='logout')
     def logout(self, request):
         auth_token = request._request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
 
