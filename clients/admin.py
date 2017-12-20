@@ -18,7 +18,7 @@ make_confirmed_by_bank.short_description = "Confirm by bank manager"
 
 def make_locked_by_bank(modeladmin, request, queryset):
     queryset.filter(role=Member.CLIENT).update(is_locked=True)
-make_locked_by_bank.short_description = "Remove confirmation by bank manager"
+make_locked_by_bank.short_description = "Lock by bank manager"
 
 
 @admin.register(Member)
