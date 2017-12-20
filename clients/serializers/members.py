@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from custom_auth.validators import age_validator
+
 UserModel = get_user_model()
 
 
@@ -14,6 +16,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = UserModel
         fields = ('first_name', 'middle_name', 'last_name', 'birthday', 'residence_address', 'email', 'username',
                   'is_confirmed', 'password')
+
+    def validate(self, attrs):
+        attrs = super(UserSerializer, self).validate(attrs)
+        birthday = getattr(attrs, 'birthday', None)
+        if birthday:
+            age_validator(birthday)
+        return attrs
 
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
