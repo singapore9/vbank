@@ -20,10 +20,10 @@ def not_future_validator(value):
 
 
 def age_validator(value):
-    MIN_AGE = 14
+    MIN_AGE = 18
     today = date.today()
-    if (value - today).days < MIN_AGE * 365:
-        raise ValidationError('Account holder must be at least %d years old' % MIN_AGE)
+    if (today - value).days < MIN_AGE * 365 + 5:
+        raise ValidationError({'email': ['Account holder must be at least %d years old' % MIN_AGE, ]})
 
 
 class HasLowerCasePasswordValidator(object):

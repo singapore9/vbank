@@ -2,8 +2,9 @@ from __future__ import unicode_literals
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
-from custom_auth.validators import age_validator
+from django.utils.datetime_safe import date
 
 UserModel = get_user_model()
 
@@ -19,9 +20,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super(UserSerializer, self).validate(attrs)
-        birthday = getattr(attrs, 'birthday', None)
+        birthday = attrs['birthday']
         if birthday:
-            age_validator(birthday)
+            MIN_AGE = 18
+            today = date.today()
+            if (today - birthday).days < MIN_AGE * 365 + 5:
+                raise ValidationError({'email': ['Account holder must be at least %d years old' % MIN_AGE, ]})
         return attrs
 
     def create(self, validated_data):
